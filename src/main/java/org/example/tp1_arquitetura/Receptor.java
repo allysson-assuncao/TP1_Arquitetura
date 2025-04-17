@@ -42,20 +42,28 @@ public class Receptor {
         
         //implemente a decodificação Hemming aqui e encontre os 
         //erros e faça as devidas correções para ter a imagem correta
-        return null;
+        this.estaIntegro = true;
+
+
+        boolean[] bitsOriginais = new boolean[bits.length - Canal.polinomio.length];
+
+        // Copia os elementos originais para um novo array
+        System.arraycopy(bits, 0, bitsOriginais, 0, bits.length - Canal.polinomio.length);
+
+        return bits;
     }
     
     private boolean[] verificaDadoHammig(boolean bits[]){
         
         //implemente a decodificação Hemming aqui e encontre os 
         //erros e faça as devidas correções para ter a imagem correta
-        return null;
+        this.estaIntegro = true;
+        return bits;
     }
     
     
     //recebe os dados do transmissor
     public void receberDadoBits(){
-        
         boolean bitsVerificados[] = this.tecnica == Estrategia.CRC ? verificaDadoCRC(this.canal.recebeDado()) : verificaDadoHammig(this.canal.recebeDado());
 
         decodificarDado(bitsVerificados);

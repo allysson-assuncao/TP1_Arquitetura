@@ -15,6 +15,9 @@ public class Canal {
     private Transmissor transmissor; //conectado posteriormente para "simular" (poderia suprimir)
     private Receptor receptor; //conectado posteriormente para "simular"
 
+    // Usando o polinômio convencional 1 0 0 1 1 == x⁴ + x + 1
+    public static boolean polinomio[] = {true, false, false, true, true};
+
     public Canal(double probRuido, double probMultiplosRuidos) {
         this.probRuido = probRuido;
         this.probMultiplosRuidos = probMultiplosRuidos;
