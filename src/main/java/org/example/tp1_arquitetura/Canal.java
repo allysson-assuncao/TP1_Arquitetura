@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class Canal {
     
-    private boolean bits[];
+    private boolean[] bits;
     private Boolean feedback; //indica resultado correto do dado ou não
     private final double probRuido; //probabilidade de gerar erro em 1 único bit
     private final double probMultiplosRuidos; //probabilidade de erro em mais bits (se 0, consideramos a geração de possível apenas em 1 bit)
@@ -16,7 +16,7 @@ public class Canal {
     private Receptor receptor; //conectado posteriormente para "simular"
 
     // Usando o polinômio convencional 1 0 0 1 1 == x⁴ + x + 1
-    public static boolean polinomio[] = {true, false, false, true, true};
+    public static boolean[] polinomio = {true, false, false, true, true};
 
     public Canal(double probRuido, double probMultiplosRuidos) {
         this.probRuido = probRuido;
@@ -80,7 +80,7 @@ public class Canal {
             }
         }
         sb.append("]");
-        System.out.println(sb.toString());
+        System.out.println(sb);
     }
 
 }

@@ -9,7 +9,7 @@ public class TP1_Arquitetura {
 
         Canal canal = new Canal(0.1, 0.0);
         
-        Transmissor transm = new Transmissor("Teste:?*/", canal, Estrategia.CRC);
+        Transmissor transm = new Transmissor("Teste", canal, Estrategia.CRC);
         Receptor receber = new Receptor(canal, Estrategia.CRC);
         
         canal.conectaTransmissor(transm);

@@ -52,19 +52,87 @@ public class Transmissor {
         return bits;
     }
 
-    /*
+/*
 
-    1 0 1 0 1 0 1 0 0 1 | 1 0 0 1 1
-    1 0 0 1 1 | |
-    --------- ↓ ↓
-    0 0 1 1 0 0 1
-        1 0 0 1 1
-        ---------
-        0 1 0 1 0
+    T → 84  → 1 0 1 0 1 0 0
+    e → 101 → 1 1 0 0 1 0 1
+    s → 115 → 1 1 1 0 0 1 1
+    t → 116 → 1 1 1 0 1 0 0
+    e → 101 → 1 1 0 0 1 0 1
 
-    */
+    POLI: 1 0 0 1 1 → Grau 4
 
-    private boolean[] dadoBitsCRC(boolean[] bits) {
+    1) Acrescentamos ao final do dado uma quantidade de zeros igual ao grau do polinômio (tamanho em bits menos 1).
+
+        1 0 1 0 1 0 0 [ 0 0 0 0 ]
+
+    2) Realizamos uma divisão binária do dado "completo" (dado + zeros) pelo polinômio, usando a operação XOR.
+
+        1 0 1 0 1 0 0 0 0 0 0 | 1 0 0 1 1
+        1 0 0 1 1 | | | | | |
+        --------- ↓ ↓ | | | |
+        0 0 1 1 0 0 0 | | | |
+            1 0 0 1 1 | | | |
+            --------- ↓ | | |
+            0 1 0 1 1 0 | | |
+              1 0 0 1 1 | | |
+              --------- ↓ ↓ |
+              0 0 1 0 1 0 0 |
+                  1 0 0 1 1 |
+                  --------- ↓
+                  0 0 1 1 1 0 → Resto
+
+    3. O resto dessa divisão é o CRC (4 bits).
+
+        1 1 1 0
+
+    4. Anexamos o CRC ao final do dado original (sem os zeros) e enviamos esse pacote completo.
+
+        1 0 1 0 1 0 0 [ 1 1 1 0 ]
+
+    5. No receptor, o mesmo processo de divisão é feito, usando o mesmo polinômio.
+
+        1 0 1 0 1 0 0 1 1 1 0 | 1 0 0 1 1
+        1 0 0 1 1 | | | | | |
+        --------- ↓ ↓ | | | |
+        0 0 1 1 0 0 0 | | | |
+            1 0 0 1 1 | | | |
+            --------- ↓ | | |
+            0 1 0 1 1 1 | | |
+              1 0 0 1 1 | | |
+              --------- ↓ ↓ |
+              0 0 1 0 0 1 1 |
+                  1 0 0 1 1 |
+                  --------- ↓
+                  0 0 0 0 0 0 → Resto
+
+    6. Se o resto da divisão no receptor for zero, os dados foram recebidos corretamente. Se o resto for diferente de zero, ocorreu erro na transmissão.
+
+    O valor retornado é o original: 1 0 1 0 1 0 0, sem os bits de verificação
+
+*/
+
+    public static boolean[] removeZerosAEsquerda(boolean[] bits) {
+        int firstTrue = 0;
+        while (firstTrue < bits.length && !bits[firstTrue]) {
+            firstTrue++;
+        }
+        if (firstTrue == 0) {
+            // Não há falses à esquerda
+            return bits;
+        }
+        if (firstTrue == bits.length) {
+            // Todos são falses, retorna um vetor vazio
+            return new boolean[0];
+        }
+        boolean[] result = new boolean[bits.length - firstTrue];
+        System.arraycopy(bits, firstTrue, result, 0, result.length);
+        return result;
+    }
+
+    private boolean[] dadoBitsCRC(boolean[] bitsOriginal) {
+
+        boolean[] bits = removeZerosAEsquerda(bitsOriginal);
 
         // Novo array com os bits originais + os 0s de verificação
         boolean[] bitsVerificacao = new boolean[bits.length + Canal.polinomio.length - 1];
@@ -77,12 +145,13 @@ public class Transmissor {
         for (int i = 5; i < bitsVerificacao.length; ) {
             // Faz o XOR dos 5 elementos atuais do resto com os 5 elementos do polinômio
             for (int j = 0; j < 5; j++) {
+                /*System.out.println(resto[j] + ", " + Canal.polinomio[j]);*/
                 resto[j] = resto[j] != Canal.polinomio[j];
-                /*if (resto[j] == Canal.polinomio[j]) {
-                    resto[j] = false;
-                } else resto[j] = true;*/
             }
-            // Retira os 0s a esquerda do resto e pega os próximos números de bits, quando há
+            /*System.out.println("Resto: ");
+            Canal.printBits(resto);*/
+
+            // Retira os 0s a esquerda do resto e pega os próximos números de bitsVerificacao, quando há
             for (int j = 0; j < 5; j++) {
                 if (!resto[j]) {
                     resto[0] = resto[1];
@@ -91,36 +160,29 @@ public class Transmissor {
                     resto[3] = resto[4];
                     resto[4] = bitsVerificacao[i];
                     i++;
+                    j = -1;
                     if (i >= bitsVerificacao.length) {
                         break;
                     }
                 } else break;
             }
+            /*System.out.println("Resto sem zeros a esquerda: ");
+            Canal.printBits(resto);*/
         }
 
         // Novo array com os bits completos
-        boolean[] bitsCompletos = new boolean[bits.length + Canal.polinomio.length -1];
+        boolean[] bitsCompletos = new boolean[bits.length + Canal.polinomio.length - 1];
 
         // Copia os elementos originais para um novo array
         System.arraycopy(bits, 0, bitsCompletos, 0, bits.length);
 
-        // Copia os 5 elementos do resto ao final do novo array
-        System.arraycopy(resto, 0, bitsCompletos, bits.length, Canal.polinomio.length - 1);
+        // Copia os 4 elementos do resto ao final do novo array
+        System.arraycopy(resto, 1, bitsCompletos, bits.length, Canal.polinomio.length - 1);
+
+        /*System.out.println("Bits completos: ");
+        Canal.printBits(bitsCompletos);*/
 
         return bitsCompletos;
-
-        /*for (int i = 4; i < bits.length; ) {
-            for (int j = 0; j < 5; j++) {
-                if (bits[i - 4 - j] == Canal.polinomio[j]) {
-                    resto[j] = false;
-                } else resto[j] = true;
-            }
-            for (int j = 0; j < 5; j++) {
-                if(!resto[j]){
-                    i++;
-                } else break;
-            }
-        }*/
     }
 
     private boolean[] dadoBitsHamming(boolean[] bits) {
@@ -133,7 +195,8 @@ public class Transmissor {
             do {
                 boolean[] bits = streamCaracter(this.mensagem.charAt(i));
 
-                Canal.printBits(bits);
+                /*System.out.println("Letra atual: ");
+                Canal.printBits(bits);*/
 
                 // Adicionando bits de verificação
                 boolean[] bitsCompletos = this.tecnica == Estrategia.CRC ? dadoBitsCRC(bits) : dadoBitsHamming(bits);
