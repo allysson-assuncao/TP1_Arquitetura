@@ -24,7 +24,7 @@ public class TP1_Arquitetura {
         
         System.out.println(receber.getMensagem());
 
-        Transmissor transmH = new Transmissor("Teste:?*/", canal, Estrategia.CRC);
+        /*Transmissor transmH = new Transmissor("Teste", canal, Estrategia.CRC);
         Receptor receberH = new Receptor(canal, Estrategia.HAMMING);
 
         canal.conectaTransmissor(transmH);
@@ -37,6 +37,6 @@ public class TP1_Arquitetura {
 
         System.out.println("Tempo total: " + (tempoF - tempoI));
 
-        System.out.println(receberH.getMensagem());
+        System.out.println(receberH.getMensagem());*/
     }
 }

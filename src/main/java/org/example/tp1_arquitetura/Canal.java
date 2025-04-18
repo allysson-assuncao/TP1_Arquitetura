@@ -69,4 +69,18 @@ public class Canal {
             }
         }
     }
+
+    public static void printBits(boolean[] bits) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for (int i = 0; i < bits.length; i++) {
+            sb.append(bits[i] ? "1" : "0");
+            if (i < bits.length - 1) {
+                sb.append(" ");
+            }
+        }
+        sb.append("]");
+        System.out.println(sb.toString());
+    }
+
 }
