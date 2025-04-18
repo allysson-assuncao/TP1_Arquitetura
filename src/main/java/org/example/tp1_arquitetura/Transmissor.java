@@ -145,7 +145,6 @@ public class Transmissor {
         for (int i = 5; i < bitsVerificacao.length; ) {
             // Faz o XOR dos 5 elementos atuais do resto com os 5 elementos do polinômio
             for (int j = 0; j < 5; j++) {
-                /*System.out.println(resto[j] + ", " + Canal.polinomio[j]);*/
                 resto[j] = resto[j] != Canal.polinomio[j];
             }
             /*System.out.println("Resto: ");
