@@ -47,13 +47,16 @@ public class Receptor {
             expoente--;
         }
 
-        System.out.println((char) codigoAscii);
+        /*System.out.println((char) codigoAscii);*/
 
         // Concatenando cada simbolo na mensagem original
         this.mensagem += (char) codigoAscii;
     }
 
     private boolean[] verificaDadoCRC(boolean[] bits) {
+
+        /*System.out.println("Bits originais receptor: ");
+        Canal.printBits(bits);*/
 
         boolean[] resto = Arrays.copyOf(bits, 5); // Copia os primeiros 5 itens de "bits"
 
@@ -72,6 +75,12 @@ public class Receptor {
                     resto[3] = resto[4];
                     resto[4] = bits[i];
                     i++;
+                    if (i == bits.length && resto[0]) {
+                        for (int c = 0; c < 5; c++) {
+                            resto[c] = resto[c] != Canal.polinomio[c];
+                        }
+                        break;
+                    }
                     j = -1;
                     if (i >= bits.length) {
                         break;
@@ -113,7 +122,7 @@ public class Receptor {
     public void receberDadoBits() {
         boolean bitsVerificados[] = this.tecnica == Estrategia.CRC ? verificaDadoCRC(this.canal.recebeDado()) : verificaDadoHammig(this.canal.recebeDado());
 
-        /*if (this.estaIntegro) */decodificarDado(bitsVerificados);
+        if (this.estaIntegro) decodificarDado(bitsVerificados);
 
         // Retorna verdadeiro ou falso conforme a integridade do dado definida nos métodos de verificação
         this.canal.enviaFeedBack(this.estaIntegro);

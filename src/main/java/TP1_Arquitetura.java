@@ -8,8 +8,9 @@ public class TP1_Arquitetura {
     public static void main(String[] args) {
 
         Canal canal = new Canal(0.1, 0.0);
-        
-        Transmissor transm = new Transmissor("s", canal, Estrategia.CRC);
+
+        //abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+        Transmissor transm = new Transmissor("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", canal, Estrategia.CRC);
         Receptor receber = new Receptor(canal, Estrategia.CRC);
         
         canal.conectaTransmissor(transm);

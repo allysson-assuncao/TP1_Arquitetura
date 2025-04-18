@@ -110,6 +110,22 @@ public class Transmissor {
 
     O valor retornado é o original: 1 0 1 0 1 0 0, sem os bits de verificação
 
+
+
+        1 1 0 0 0 1 0 0 0 0 0 | 1 0 0 1 1
+        1 0 0 1 1 | | | | | |
+        --------- ↓ | | | | |
+        0 1 0 1 1 1 | | | | |
+          1 0 0 1 1 | | | | |
+          --------- ↓ ↓ | | |
+          0 0 1 0 0 0 0 | | |
+              1 0 0 1 1 | | |
+              --------- ↓ ↓ ↓
+              0 0 0 1 1 0 0 0
+                    1 0 0 1 1
+                    ---------
+                    0 1 0 1 1
+
 */
 
     public static boolean[] removeZerosAEsquerda(boolean[] bits) {
@@ -159,6 +175,12 @@ public class Transmissor {
                     resto[3] = resto[4];
                     resto[4] = bitsVerificacao[i];
                     i++;
+                    if (i == bitsVerificacao.length && resto[0]) {
+                        for (int c = 0; c < 5; c++) {
+                            resto[c] = resto[c] != Canal.polinomio[c];
+                        }
+                        break;
+                    }
                     j = -1;
                     if (i >= bitsVerificacao.length) {
                         break;
