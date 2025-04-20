@@ -206,9 +206,91 @@ public class Transmissor {
         return bitsCompletos;
     }
 
-    private boolean[] dadoBitsHamming(boolean[] bits) {
 
-        return bits;
+
+    /*
+
+        1 0 1 0 1 0 0 -> Bit original 'T'
+
+        // ENVIO NO TRANSMISSOR
+
+        1 passo: como definir a quantidade de bits de verificação
+
+        r = quantidade de bits de verificação
+        K = quantidade de bits do dado original
+
+        2^r = K + r + 1
+
+        2⁴ = 7 + 4 + 1
+
+        2 passo: adicionar os digitos de verificação nas posições de base 2
+
+        001  010  011  100  101  110  111 1000 1001 1010 1011
+          _    _    1    _    0    1    0    _    1    0    0
+
+        3 passo: para definir o valor dos bits de verificação devemos fazer o XOR dos valores nas casas que tem o bit 1 na mesma posição que o do bit de verificação
+
+        H1 = 1 + 0 + 0 + 1 + 0 = 0
+        H2 = 1 + 1 + 0 + 0 + 0 = 0
+        H3 = 0 + 1 + 0 = 1
+        H4 = 1 + 0 + 0 = 1
+
+        4 passo: preencher o dado com os bits adicionais e enviar
+
+        0 0 1 1 0 1 0 1 1 0 0 -> 'T' com bits de hamming
+
+        // VALIDAÇÃO NO RECEPTOR
+
+        1 passo: refazer o XOR, mas dessa vez incluindo os bits de verificação
+
+        H1 = 0 + 1 + 0 + 0 + 1 + 0 = 0
+        H2 = 0 + 1 + 1 + 0 + 0 + 0 = 0
+        h3 = 1 + 0 + 1 + 0 = 0
+        H4 = 1 +  1 + 0 + 0 = 0
+
+    */
+
+    public static int calcularBitsParidade(int k) {
+        int r = 0;
+        while (Math.pow(2, r) < (k + r + 1)) {
+            r++;
+        }
+        return r;
+    }
+
+    private static boolean isPotenciaDeDois(int n) {
+        return n > 0 && (n & (n - 1)) == 0;
+    }
+
+    private boolean[] dadoBitsHamming(boolean[] bits) {        // 2^r - r >= K + 1
+
+        int quantBitsHamming = calcularBitsParidade(bits.length);
+
+        // Novo array com os bits originais + os bits de hamming a serem definidos
+        boolean[] bitsCompletos = new boolean[bits.length + quantBitsHamming];
+
+        int c = 0;
+        for (int i = 0; i < bitsCompletos.length; i++) {
+            if (isPotenciaDeDois(i + 1)) {
+                continue;
+            }
+            bitsCompletos[i] = bits[c];
+            c++;
+        }
+
+        int quantidade1s = 0;
+
+        for (int i = 1; i <= bitsCompletos.length; i++) {
+            if (isPotenciaDeDois(i)) {
+                int indice1 = ondeEstaO1(intToBits(1));
+                for(int j = i + 1; j <= bitsCompletos.length; j++){
+                    if (tem1NoIndice(intToBits(j), indice1)) quantidade1s++;
+                }
+                bitsCompletos[i -1] = !(quantidade1s % 2 == 0);
+            }
+        }
+
+        return bitsCompletos;
     }
 
     public void enviaDado() {
