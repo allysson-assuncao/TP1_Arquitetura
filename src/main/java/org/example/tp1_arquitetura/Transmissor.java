@@ -33,6 +33,10 @@ public class Transmissor {
     //convertendo um símbolo para "vetor" de boolean (bits)
     private boolean[] streamCaracter(char simbolo) {
 
+        if(simbolo == '\n' || simbolo == '\uFEFF'){
+            simbolo = ' ';
+        }
+
         //cada símbolo da tabela ASCII é representado com 8 bits
         boolean[] bits = new boolean[8];
 
@@ -288,8 +292,8 @@ public class Transmissor {
             }
         }
 
-        System.out.println("Bits enviados transmissor: ");
-        Canal.printBits(bitsCompletos);
+        /*System.out.println("Bits enviados transmissor: ");
+        Canal.printBits(bitsCompletos);*/
 
         return bitsCompletos;
     }

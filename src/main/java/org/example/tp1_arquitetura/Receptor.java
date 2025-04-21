@@ -1,5 +1,9 @@
 package org.example.tp1_arquitetura;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 
 public class Receptor {
@@ -46,8 +50,6 @@ public class Receptor {
             }
             expoente--;
         }
-
-        /*System.out.println((char) codigoAscii);*/
 
         // Concatenando cada simbolo na mensagem original
         this.mensagem += (char) codigoAscii;
@@ -114,8 +116,8 @@ public class Receptor {
 
     private boolean[] verificaDadoHammig(boolean[] bits) {
 
-        System.out.println("Bits recebidos receptor: ");
-        Canal.printBits(bits);
+        /*System.out.println("Bits recebidos receptor: ");
+        Canal.printBits(bits);*/
 
         this.estaIntegro = true;
 
@@ -136,7 +138,6 @@ public class Receptor {
                 if (!bitHammingPar) indiceCorrecao += i;
             }
         }
-        System.out.println(indiceCorrecao);
 
         if (indiceCorrecao > bits.length) {
             this.estaIntegro = false;
@@ -157,12 +158,11 @@ public class Receptor {
             c++;
         }
 
-        System.out.println("Bits enviados receptor: ");
-        Canal.printBits(adicionaZerosAEsquerda(bitsOriginais, 8));
+        /*System.out.println("Bits enviados receptor: ");
+        Canal.printBits(adicionaZerosAEsquerda(bitsOriginais, 8));*/
 
         return adicionaZerosAEsquerda(bitsOriginais, 8);
     }
-
 
     //recebe os dados do transmissor
     public void receberDadoBits() {
@@ -174,9 +174,19 @@ public class Receptor {
         this.canal.enviaFeedBack(this.estaIntegro);
     }
 
+    // Cria um arquivo de resultado com o conteúdo completo da mensagem decodificada com as validações
     public void gravaMensArquivo() {
-        /*
-        aqui você deve implementar um mecanismo para gravar a mensagem em arquivo
-        */
+        String nomeArquivo = "mensagem_recebida.txt";
+        try {
+            Files.write(
+                Paths.get(nomeArquivo),
+                this.mensagem.getBytes(),
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING
+            );
+            System.out.println("Mensagem decodificada salva em: " + nomeArquivo);
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar a mensagem decodificada: " + e.getMessage());
+        }
     }
 }
