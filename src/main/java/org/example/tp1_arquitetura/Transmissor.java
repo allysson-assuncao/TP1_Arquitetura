@@ -230,6 +230,10 @@ public class Transmissor {
 
         3 passo: para definir o valor dos bits de verificação devemos fazer o XOR dos valores nas casas que tem o bit 1 na mesma posição que o do bit de verificação
 
+        0000 0001 -> 1 ta na posicao 0
+        0000 0011
+
+
         H1 = 1 + 0 + 0 + 1 + 0 = 0
         H2 = 1 + 1 + 0 + 0 + 0 = 0
         H3 = 0 + 1 + 0 = 1
@@ -244,34 +248,28 @@ public class Transmissor {
         1 passo: refazer o XOR, mas dessa vez incluindo os bits de verificação
 
         H1 = 0 + 1 + 0 + 0 + 1 + 0 = 0
-        H2 = 0 + 1 + 1 + 0 + 0 + 0 = 0
+        H2 = 0 + 1 + 1 + 0 + 0 + 0 = 1 -> 2
         h3 = 1 + 0 + 1 + 0 = 0
-        H4 = 1 +  1 + 0 + 0 = 0
+        H4 = 1 +  1 + 0 + 0 = 1 -> 8
+        h5                  = 1
+
+        1 1 0 1 0 = 10
+        2 + 8 = 10
 
     */
 
-    public static int calcularBitsParidade(int k) {
-        int r = 0;
-        while (Math.pow(2, r) < (k + r + 1)) {
-            r++;
-        }
-        return r;
-    }
+    private boolean[] dadoBitsHamming(boolean[] bitsOriginal) {        // 2^r - r >= K + 1
 
-    private static boolean isPotenciaDeDois(int n) {
-        return n > 0 && (n & (n - 1)) == 0;
-    }
+        boolean[] bits = removeZerosAEsquerda(bitsOriginal);
 
-    private boolean[] dadoBitsHamming(boolean[] bits) {        // 2^r - r >= K + 1
-
-        int quantBitsHamming = calcularBitsParidade(bits.length);
+        int quantBitsHamming = Canal.calcularBitsParidade(bits.length);
 
         // Novo array com os bits originais + os bits de hamming a serem definidos
         boolean[] bitsCompletos = new boolean[bits.length + quantBitsHamming];
 
         int c = 0;
         for (int i = 0; i < bitsCompletos.length; i++) {
-            if (isPotenciaDeDois(i + 1)) {
+            if (Canal.isPotenciaDeDois(i + 1)) {
                 continue;
             }
             bitsCompletos[i] = bits[c];
@@ -279,16 +277,19 @@ public class Transmissor {
         }
 
         int quantidade1s = 0;
-
         for (int i = 1; i <= bitsCompletos.length; i++) {
-            if (isPotenciaDeDois(i)) {
-                int indice1 = ondeEstaO1(intToBits(1));
+            if (Canal.isPotenciaDeDois(i)) {
+                int indice1 = Canal.ondeEstaO1(Canal.intToBits(i));
                 for(int j = i + 1; j <= bitsCompletos.length; j++){
-                    if (tem1NoIndice(intToBits(j), indice1)) quantidade1s++;
+                    if (Canal.intToBits(j)[indice1] && bitsCompletos[j -1]) quantidade1s++;
                 }
                 bitsCompletos[i -1] = !(quantidade1s % 2 == 0);
+                quantidade1s = 0;
             }
         }
+
+        System.out.println("Bits enviados transmissor: ");
+        Canal.printBits(bitsCompletos);
 
         return bitsCompletos;
     }

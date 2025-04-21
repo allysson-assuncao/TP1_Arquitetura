@@ -113,8 +113,54 @@ public class Receptor {
     }
 
     private boolean[] verificaDadoHammig(boolean[] bits) {
+
+        System.out.println("Bits recebidos receptor: ");
+        Canal.printBits(bits);
+
         this.estaIntegro = true;
-        return bits;
+
+        int quantBitsHamming = Canal.calcularBitsParidade(bits.length);
+
+        int quantidade1s = 0;
+        boolean bitHammingPar;
+        int indiceCorrecao = 0;
+        for (int i = 1; i <= bits.length; i++) {
+            if (Canal.isPotenciaDeDois(i)) {
+                int indice1 = Canal.ondeEstaO1(Canal.intToBits(i));
+                for (int j = i; j <= bits.length; j++) {
+                    if (Canal.intToBits(j)[indice1] && bits[j - 1]) quantidade1s++;
+                }
+                bitHammingPar = (quantidade1s % 2 == 0);
+                this.estaIntegro = bitHammingPar;
+                quantidade1s = 0;
+                if (!bitHammingPar) indiceCorrecao += i;
+            }
+        }
+        System.out.println(indiceCorrecao);
+
+        if (indiceCorrecao > bits.length) {
+            this.estaIntegro = false;
+        } else if (indiceCorrecao != 0) {
+            bits[indiceCorrecao - 1] = !bits[indiceCorrecao - 1];
+            this.estaIntegro = true;
+        }
+
+        // Novo array com os bits recebidos - os bits de hamming que foram verificados
+        boolean[] bitsOriginais = new boolean[bits.length - quantBitsHamming];
+
+        int c = 0;
+        for (int i = 0; i < bits.length; i++) {
+            if (Canal.isPotenciaDeDois(i + 1)) {
+                continue;
+            }
+            bitsOriginais[c] = bits[i];
+            c++;
+        }
+
+        System.out.println("Bits enviados receptor: ");
+        Canal.printBits(adicionaZerosAEsquerda(bitsOriginais, 8));
+
+        return adicionaZerosAEsquerda(bitsOriginais, 8);
     }
 
 
