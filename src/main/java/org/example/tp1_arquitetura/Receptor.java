@@ -51,6 +51,8 @@ public class Receptor {
             expoente--;
         }
 
+        System.out.print((char) codigoAscii);
+
         // Concatenando cada simbolo na mensagem original
         this.mensagem += (char) codigoAscii;
     }
