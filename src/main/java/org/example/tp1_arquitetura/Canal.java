@@ -9,7 +9,6 @@ public class Canal {
     private boolean[] bits;
     private Boolean feedback; //indica resultado correto do dado ou não
     private final double probRuido; //probabilidade de gerar erro em 1 único bit
-    private final double probMultiplosRuidos; //probabilidade de erro em mais bits (se 0, consideramos a geração de possível apenas em 1 bit)
     private final Random geradorAleatorio = new Random(42);
 
     private Transmissor transmissor; //conectado posteriormente para "simular" (poderia suprimir)
@@ -18,15 +17,17 @@ public class Canal {
     // Usando o polinômio convencional 1 0 0 1 1 == x⁴ + x + 1
     public static boolean[] polinomio = {true, false, false, true, true};
 
-    public Canal(double probRuido, double probMultiplosRuidos) {
-        this.probRuido = probRuido;
-        this.probMultiplosRuidos = probMultiplosRuidos;
-    }
+    public Canal(double probRuido) {this.probRuido = probRuido;}
 
     public void enviarDado(boolean dados[]) {
         this.feedback = null;
         this.bits = dados;
         geradorRuido(this.bits);
+        try {
+            Thread.sleep(geradorAleatorio.nextInt(20) + 37);
+        } catch (InterruptedException ex) {
+            System.err.println("processo interrompido durante o envio do dado");
+        }
         this.receptor.receberDadoBits();
     }
 
@@ -36,6 +37,11 @@ public class Canal {
 
     public void enviaFeedBack(Boolean feedback) {
         this.bits = null;
+        try {
+            Thread.sleep(geradorAleatorio.nextInt(20));
+        } catch (InterruptedException ex) {
+            System.err.println("processo interrompido durante o envio do dado");
+        }
         this.feedback = feedback;
     }
 
@@ -55,19 +61,12 @@ public class Canal {
     //não modifique (seu objetivo é corrigir esse erro gerado no receptor)
     private void geradorRuido(boolean bits[]) {
 
-        int qRuido = 1;
-
-        if (this.probMultiplosRuidos >= 0.0) {
-            qRuido = this.geradorAleatorio.nextInt(3) + 1;
+        //pode gerar um erro ou não..
+        if (this.probRuido > 0.0 && this.geradorAleatorio.nextDouble() < this.probRuido) {
+            int indice = this.geradorAleatorio.nextInt(this.bits.length);
+            bits[indice] = !bits[indice];
         }
 
-        for (int ruido = 1; ruido <= qRuido; ruido++) {
-            //pode gerar um erro ou não..
-            if (this.geradorAleatorio.nextDouble() < this.probRuido) {
-                int indice = this.geradorAleatorio.nextInt(this.bits.length);
-                bits[indice] = !bits[indice];
-            }
-        }
     }
 
     public static void printBits(boolean[] bits) {

@@ -3,6 +3,7 @@ import org.example.tp1_arquitetura.Estrategia;
 import org.example.tp1_arquitetura.Receptor;
 import org.example.tp1_arquitetura.Transmissor;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -14,7 +15,7 @@ public class TP1_Arquitetura {
 
     /*public static void main(String[] args) {
 
-        Canal canal = new Canal(0.1, 0.0);
+        Canal canal = new Canal(0.1);
 
         //abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
 
@@ -50,14 +51,8 @@ public class TP1_Arquitetura {
         Estrategia[] tecnicas = {Estrategia.CRC, Estrategia.HAMMING};
 
         // Caminho do arquivo de entrada
-        String caminhoArquivo = "/home/anybody/Documents/Projects/TP1_Arquitetura/src/main/java/Moby Dick.txt";
-        String mensagem = "";
-        try {
-            mensagem = new String(Files.readAllBytes(Paths.get(caminhoArquivo)));
-        } catch (IOException e) {
-            System.err.println("Erro ao ler o arquivo: " + e.getMessage());
-            return;
-        }
+        String caminhoArquivo = "C:\\Users\\0063398\\Documents\\Projetos\\TP1_Arquitetura\\src\\main\\java\\Moby Dick.txt";
+        File arquivo = new File(caminhoArquivo);
 
         // Monta o cabeçalho do CSV
         StringBuilder csv = new StringBuilder();
@@ -71,8 +66,8 @@ public class TP1_Arquitetura {
         for (Estrategia tecnica : tecnicas) {
             csv.append(tecnica.name());
             for (double ruido : ruidos) {
-                Canal canal = new Canal(ruido, 0.0);
-                Transmissor transm = new Transmissor("Teste", canal, tecnica);
+                Canal canal = new Canal(ruido);
+                Transmissor transm = new Transmissor(arquivo, canal, tecnica);
                 Receptor receber = new Receptor(canal, tecnica);
 
                 canal.conectaTransmissor(transm);

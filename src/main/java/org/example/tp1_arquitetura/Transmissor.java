@@ -1,6 +1,9 @@
 package org.example.tp1_arquitetura;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 public class Transmissor {
@@ -20,32 +23,35 @@ public class Transmissor {
         this.canal = canal;
         this.tecnica = tecnica;
 
-        carregarMensagemArquivo();
+        this.mensagem = carregarMensagemArquivo();
     }
 
-    private void carregarMensagemArquivo() {
-        /*sua implementação aqui!!!
-        modifique o que precisar neste método para carregar na mensagem 
-        todo o conteúdo do arquivo
-        */
+    private String carregarMensagemArquivo() {
+        try {
+            return new String(Files.readAllBytes(Paths.get(arquivo.getPath())));
+        } catch (IOException e) {
+            System.err.println("Erro ao ler o arquivo: " + e.getMessage());
+        }
+        return "";
     }
 
     //convertendo um símbolo para "vetor" de boolean (bits)
-    private boolean[] streamCaracter(char simbolo) {
-
-        if(simbolo == '\n' || simbolo == '\uFEFF'){
-            simbolo = ' ';
-        }
+    private boolean[] streamCaracter(char simbolo){
 
         //cada símbolo da tabela ASCII é representado com 8 bits
-        boolean[] bits = new boolean[8];
+        boolean bits[] = new boolean[8];
 
         //convertendo um char para int (encontramos o valor do mesmo na tabela ASCII)
         int valorSimbolo = (int) simbolo;
+
+        //caracteres inválidos para UTF-8
+        if(valorSimbolo > 255){
+            valorSimbolo = 0; //quebra de linha
+        }
         int indice = 7;
 
         //convertendo cada "bits" do valor da tabela ASCII
-        while (valorSimbolo >= 2) {
+        while(valorSimbolo >= 2){
             int resto = valorSimbolo % 2;
             valorSimbolo /= 2;
             bits[indice] = (resto == 1);
