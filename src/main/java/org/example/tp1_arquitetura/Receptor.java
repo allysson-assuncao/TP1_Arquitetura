@@ -59,9 +59,6 @@ public class Receptor {
 
     private boolean[] verificaDadoCRC(boolean[] bits) {
 
-        /*System.out.println("Bits originais receptor: ");
-        Canal.printBits(bits);*/
-
         boolean[] resto = Arrays.copyOf(bits, 5); // Copia os primeiros 5 itens de "bits"
 
         for (int i = 5; i < bits.length; ) {
@@ -106,12 +103,6 @@ public class Receptor {
 
         // Copia os elementos originais para um novo array
         System.arraycopy(bits, 0, bitsOriginais, 0, bitsOriginais.length);
-
-        /*System.out.println("Bits originais: ");
-        Canal.printBits(bitsOriginais);
-
-        System.out.println("Bits sem zeros adcionais: ");
-        Canal.printBits(adicionaZerosAEsquerda(bitsOriginais, 8));*/
 
         return adicionaZerosAEsquerda(bitsOriginais, 8);
     }

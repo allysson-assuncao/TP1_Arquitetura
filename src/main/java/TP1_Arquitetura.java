@@ -14,19 +14,7 @@ import java.util.Scanner;
 public class TP1_Arquitetura {
 
     /*public static void main(String[] args) {
-
         Canal canal = new Canal(0.1);
-
-        //abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
-
-
-        String mensagem = "";
-        try {
-            mensagem = new String(Files.readAllBytes(Paths.get("/home/anybody/Documents/Projects/TP1_Arquitetura/src/main/java/Moby Dick.txt")));
-        } catch (IOException e) {
-            System.err.println("Erro ao ler o arquivo: " + e.getMessage());
-            return;
-        }
 
         Transmissor transm = new Transmissor("", canal, Estrategia.HAMMING);
         Receptor receber = new Receptor(canal, Estrategia.HAMMING);
@@ -42,16 +30,17 @@ public class TP1_Arquitetura {
         System.out.println("Tempo total: " + (tempoF - tempoI));
 
         receber.gravaMensArquivo();
-
     }*/
 
     public static void main(String[] args) {
-        // Parâmetros de ruído a serem testados
+        // Chances de ruído a serem testadas
         double[] ruidos = {0.0, 0.1, 0.2, 0.3, 0.4, 0.5};
+
+        // Lista das tecnicas disponiveis
         Estrategia[] tecnicas = {Estrategia.CRC, Estrategia.HAMMING};
 
         // Caminho do arquivo de entrada
-        String caminhoArquivo = "C:\\Users\\0063398\\Documents\\Projetos\\TP1_Arquitetura\\src\\main\\java\\Moby Dick.txt";
+        String caminhoArquivo = "/home/anybody/Documents/Projects/TP1_Arquitetura/src/main/java/Moby Dick.txt";
         File arquivo = new File(caminhoArquivo);
 
         // Monta o cabeçalho do CSV

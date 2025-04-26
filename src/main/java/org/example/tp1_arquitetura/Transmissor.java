@@ -139,21 +139,22 @@ public class Transmissor {
 */
 
     public static boolean[] removeZerosAEsquerda(boolean[] bits) {
-        int firstTrue = 0;
-        while (firstTrue < bits.length && !bits[firstTrue]) {
-            firstTrue++;
+        int quant0Esquerda = 0;
+        while (quant0Esquerda < bits.length && !bits[quant0Esquerda]) {
+            quant0Esquerda++;
         }
-        if (firstTrue == 0) {
-            // Não há falses à esquerda
+        if (quant0Esquerda == 0) {
+            // Não há 0s à esquerda
             return bits;
         }
-        if (firstTrue == bits.length) {
+        if (quant0Esquerda == bits.length) {
             // Todos são falses, retorna um vetor vazio
             return new boolean[0];
         }
-        boolean[] result = new boolean[bits.length - firstTrue];
-        System.arraycopy(bits, firstTrue, result, 0, result.length);
-        return result;
+        boolean[] resultado = new boolean[bits.length - quant0Esquerda];
+        System.arraycopy(bits, quant0Esquerda, resultado, 0, resultado.length);
+
+        return resultado;
     }
 
     private boolean[] dadoBitsCRC(boolean[] bitsOriginal) {
@@ -173,8 +174,6 @@ public class Transmissor {
             for (int j = 0; j < 5; j++) {
                 resto[j] = resto[j] != Canal.polinomio[j];
             }
-            /*System.out.println("Resto: ");
-            Canal.printBits(resto);*/
 
             // Retira os 0s a esquerda do resto e pega os próximos números de bitsVerificacao, quando há
             for (int j = 0; j < 5; j++) {
@@ -197,8 +196,6 @@ public class Transmissor {
                     }
                 } else break;
             }
-            /*System.out.println("Resto sem zeros a esquerda: ");
-            Canal.printBits(resto);*/
         }
 
         // Novo array com os bits completos
@@ -209,9 +206,6 @@ public class Transmissor {
 
         // Copia os 4 elementos do resto ao final do novo array
         System.arraycopy(resto, 1, bitsCompletos, bits.length, Canal.polinomio.length - 1);
-
-        /*System.out.println("Bits completos: ");
-        Canal.printBits(bitsCompletos);*/
 
         return bitsCompletos;
     }
@@ -298,9 +292,6 @@ public class Transmissor {
             }
         }
 
-        /*System.out.println("Bits enviados transmissor: ");
-        Canal.printBits(bitsCompletos);*/
-
         return bitsCompletos;
     }
 
@@ -308,9 +299,6 @@ public class Transmissor {
         for (int i = 0; i < this.mensagem.length(); i++) {
             do {
                 boolean[] bits = streamCaracter(this.mensagem.charAt(i));
-
-                /*System.out.println("Letra atual: ");
-                Canal.printBits(bits);*/
 
                 // Adicionando bits de verificação
                 boolean[] bitsCompletos = this.tecnica == Estrategia.CRC ? dadoBitsCRC(bits) : dadoBitsHamming(bits);

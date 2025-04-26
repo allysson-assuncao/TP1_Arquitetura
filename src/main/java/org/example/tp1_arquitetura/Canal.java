@@ -14,10 +14,12 @@ public class Canal {
     private Transmissor transmissor; //conectado posteriormente para "simular" (poderia suprimir)
     private Receptor receptor; //conectado posteriormente para "simular"
 
-    // Usando o polinômio convencional 1 0 0 1 1 == x⁴ + x + 1
+    // Usando um polinômio convencional: 1 0 0 1 1 == x⁴ + x + 1
     public static boolean[] polinomio = {true, false, false, true, true};
 
-    public Canal(double probRuido) {this.probRuido = probRuido;}
+    public Canal(double probRuido) {
+        this.probRuido = probRuido;
+    }
 
     public void enviarDado(boolean dados[]) {
         this.feedback = null;
@@ -70,16 +72,13 @@ public class Canal {
     }
 
     public static void printBits(boolean[] bits) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        for (int i = 0; i < bits.length; i++) {
-            sb.append(bits[i] ? "1" : "0");
-            if (i < bits.length - 1) {
-                sb.append(" ");
-            }
+        String vetorDeBits = "";
+        vetorDeBits += "[";
+        for (boolean bit : bits) {
+            vetorDeBits += (bit ? "1" : "0");
         }
-        sb.append("]");
-        System.out.println(sb);
+        vetorDeBits += "]";
+        System.out.println(vetorDeBits);
     }
 
     public static int calcularBitsParidade(int k) {
@@ -90,6 +89,8 @@ public class Canal {
         return r;
     }
 
+    // Esse método identifica se um número inteiro é potência de dois
+    // Baseia-se no operador '&' que compara dois inteiros bit a bit com a operação AND
     public static boolean isPotenciaDeDois(int n) {
         return n > 0 && (n & (n - 1)) == 0;
     }
@@ -107,7 +108,7 @@ public class Canal {
     // Converte um inteiro para um vetor de boolean com sua representação em binario
     public static boolean[] intToBits(int valor) {
         if (valor == 0) return new boolean[]{false};
-        int tamanho = Integer.SIZE;
+        int tamanho = Integer.SIZE; // Considera os zeros a esquerda
 
         boolean[] bits = new boolean[tamanho];
         for (int i = tamanho - 1; i >= 0; i--) {
