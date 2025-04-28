@@ -26,6 +26,7 @@ public class Transmissor {
         this.mensagem = carregarMensagemArquivo();
     }
 
+    // Retorna o texto extraido do arquivo
     private String carregarMensagemArquivo() {
         try {
             return new String(Files.readAllBytes(Paths.get(arquivo.getPath())));
@@ -35,7 +36,7 @@ public class Transmissor {
         return "";
     }
 
-    //convertendo um símbolo para "vetor" de boolean (bits)
+    // convertendo um símbolo para "vetor" de boolean (bits)
     private boolean[] streamCaracter(char simbolo){
 
         //cada símbolo da tabela ASCII é representado com 8 bits
@@ -63,6 +64,8 @@ public class Transmissor {
     }
 
 /*
+
+    // ABSTRAÇÃO DA SOLUÇÃO
 
     T → 84  → 1 0 1 0 1 0 0
     e → 101 → 1 1 0 0 1 0 1
@@ -135,20 +138,22 @@ public class Transmissor {
                     1 0 0 1 1
                     ---------
                     0 1 0 1 1
-
 */
 
+    // Metodo que remove os 0s à esquerda para simplificar a abstração da solução
     public static boolean[] removeZerosAEsquerda(boolean[] bits) {
         int quant0Esquerda = 0;
+
+        // Identifica quantos 0s a esquerda tem
         while (quant0Esquerda < bits.length && !bits[quant0Esquerda]) {
             quant0Esquerda++;
         }
         if (quant0Esquerda == 0) {
-            // Não há 0s à esquerda
+            // Não há 0s à esquerda, retorna
             return bits;
         }
         if (quant0Esquerda == bits.length) {
-            // Todos são falses, retorna um vetor vazio
+            // Apenas zeros, retorna um vetor zerado
             return new boolean[0];
         }
         boolean[] resultado = new boolean[bits.length - quant0Esquerda];
@@ -157,6 +162,7 @@ public class Transmissor {
         return resultado;
     }
 
+    // Metodo que adicionas os bits de verificação considerando a tecnica CRC
     private boolean[] dadoBitsCRC(boolean[] bitsOriginal) {
 
         boolean[] bits = removeZerosAEsquerda(bitsOriginal);
@@ -170,7 +176,7 @@ public class Transmissor {
         boolean[] resto = Arrays.copyOf(bits, 5); // Copia os primeiros 5 itens de "bits"
 
         for (int i = 5; i < bitsVerificacao.length; ) {
-            // Faz o XOR dos 5 elementos atuais do resto com os 5 elementos do polinômio
+            // Faz o "XOR" dos 5 elementos atuais do resto com os 5 elementos do polinômio
             for (int j = 0; j < 5; j++) {
                 resto[j] = resto[j] != Canal.polinomio[j];
             }
@@ -182,9 +188,12 @@ public class Transmissor {
                     resto[1] = resto[2];
                     resto[2] = resto[3];
                     resto[3] = resto[4];
-                    resto[4] = bitsVerificacao[i];
+                    resto[4] = bitsVerificacao[i]; // Proximo bit
                     i++;
+
+                    // Caso não tenham mais elementos a serem adicinados mas o resto começa em um, ainda da pra dividir
                     if (i == bitsVerificacao.length && resto[0]) {
+                        // Última divisão
                         for (int c = 0; c < 5; c++) {
                             resto[c] = resto[c] != Canal.polinomio[c];
                         }
@@ -213,6 +222,8 @@ public class Transmissor {
 
 
     /*
+
+        // ABSTRAÇÃO DA SOLUÇÃO
 
         1 0 1 0 1 0 0 -> Bit original 'T'
 
@@ -262,7 +273,8 @@ public class Transmissor {
 
     */
 
-    private boolean[] dadoBitsHamming(boolean[] bitsOriginal) {        // 2^r - r >= K + 1
+    // Metodo que adicionas os bits de verificação considerando a tecnica Hamming
+    private boolean[] dadoBitsHamming(boolean[] bitsOriginal) {
 
         boolean[] bits = removeZerosAEsquerda(bitsOriginal);
 
@@ -272,6 +284,8 @@ public class Transmissor {
         boolean[] bitsCompletos = new boolean[bits.length + quantBitsHamming];
 
         int c = 0;
+
+        // Itera sobre os vetor adicionando os bits originais, "pulando" as posições de Hamming dinamicamente
         for (int i = 0; i < bitsCompletos.length; i++) {
             if (Canal.isPotenciaDeDois(i + 1)) {
                 continue;
@@ -281,12 +295,20 @@ public class Transmissor {
         }
 
         int quantidade1s = 0;
+
+        // Itera dobre o vetor partindo so 1 (abstração)
         for (int i = 1; i <= bitsCompletos.length; i++) {
+
+            // Caso seja um bit de hamming o indice do 1 é identificado
             if (Canal.isPotenciaDeDois(i)) {
                 int indice1 = Canal.ondeEstaO1(Canal.intToBits(i));
+
+                // Contabilizando a quantidade de 1s nos indices seguintes quem tem 1 no indice identificado
                 for(int j = i + 1; j <= bitsCompletos.length; j++){
                     if (Canal.intToBits(j)[indice1] && bitsCompletos[j -1]) quantidade1s++;
                 }
+
+                // Preenche os bits de Hamming conforme a quantidade de 1s, par = 0, impar = 1
                 bitsCompletos[i -1] = !(quantidade1s % 2 == 0);
                 quantidade1s = 0;
             }

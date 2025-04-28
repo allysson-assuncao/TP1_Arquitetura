@@ -32,6 +32,7 @@ public class TP1_Arquitetura {
         receber.gravaMensArquivo();
     }*/
 
+    // Método principal para a execução dos testes de envio de dados na "rede"
     public static void main(String[] args) {
         // Chances de ruído a serem testadas
         double[] ruidos = {0.0, 0.1, 0.2, 0.3, 0.4, 0.5};
@@ -39,8 +40,8 @@ public class TP1_Arquitetura {
         // Lista das tecnicas disponiveis
         Estrategia[] tecnicas = {Estrategia.CRC, Estrategia.HAMMING};
 
-        // Caminho do arquivo de entrada
-        String caminhoArquivo = "/home/anybody/Documents/Projects/TP1_Arquitetura/src/main/java/Moby Dick.txt";
+        // Criação do caminho
+        String caminhoArquivo = "src/main/java/Moby Dick.txt";
         File arquivo = new File(caminhoArquivo);
 
         // Monta o cabeçalho do CSV

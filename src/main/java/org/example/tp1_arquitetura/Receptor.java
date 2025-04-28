@@ -28,17 +28,6 @@ public class Receptor {
         return mensagem;
     }
 
-    public static boolean[] adicionaZerosAEsquerda(boolean[] bits, int tamanho) {
-        if (bits.length >= tamanho) {
-            return bits;
-        }
-        boolean[] resultado = new boolean[tamanho];
-        int offset = tamanho - bits.length;
-        // Os primeiros 'offset' elementos já são false por padrão
-        System.arraycopy(bits, 0, resultado, offset, bits.length);
-        return resultado;
-    }
-
     private void decodificarDado(boolean[] bits) {
         int codigoAscii = 0;
         int expoente = bits.length - 1;
@@ -57,17 +46,29 @@ public class Receptor {
         this.mensagem += (char) codigoAscii;
     }
 
+    // Adiciona 0s a esquerda para preencher um determinado tamanho de vetor, para mantes os 8 usados em caracteres UTF-8
+    public static boolean[] adicionaZerosAEsquerda(boolean[] bits, int tamanho) {
+        if (bits.length >= tamanho) {
+            return bits;
+        }
+        boolean[] resultado = new boolean[tamanho];
+        int offset = tamanho - bits.length;
+        // Copia os elementos originais ao novo vetor a partir do offset, deixando o restante como false (0) por padrão
+        System.arraycopy(bits, 0, resultado, offset, bits.length);
+        return resultado;
+    }
+
+    // Verifica a integridade do dado recebido na rede utilizando a técnica CRC
     private boolean[] verificaDadoCRC(boolean[] bits) {
 
-        boolean[] resto = Arrays.copyOf(bits, 5); // Copia os primeiros 5 itens de "bits"
+        // Começa igual ao do transmissor
+        boolean[] resto = Arrays.copyOf(bits, 5);
 
         for (int i = 5; i < bits.length; ) {
-            // Faz o XOR dos 5 elementos atuais do resto com os 5 elementos do polinômio
             for (int j = 0; j < 5; j++) {
                 resto[j] = resto[j] != Canal.polinomio[j];
             }
 
-            // Retira os 0s a esquerda do resto e pega os próximos números de bitsVerificacao, quando há
             for (int j = 0; j < 5; j++) {
                 if (!resto[j]) {
                     resto[0] = resto[1];
@@ -92,6 +93,7 @@ public class Receptor {
 
         this.estaIntegro = true;
 
+        // Caso o resto tenha algum 1, o dado não está integro
         for (boolean b : resto) {
             if (b) {
                 this.estaIntegro = false;
@@ -99,6 +101,7 @@ public class Receptor {
             }
         }
 
+        // Novo vetor sem os bits de verificação adicionais
         boolean[] bitsOriginais = new boolean[bits.length - (Canal.polinomio.length - 1)];
 
         // Copia os elementos originais para um novo array
@@ -107,15 +110,14 @@ public class Receptor {
         return adicionaZerosAEsquerda(bitsOriginais, 8);
     }
 
+    // Verifica a integridade do dado recebido na rede utilizando a técnica Hamming
     private boolean[] verificaDadoHammig(boolean[] bits) {
-
-        /*System.out.println("Bits recebidos receptor: ");
-        Canal.printBits(bits);*/
 
         this.estaIntegro = true;
 
         int quantBitsHamming = Canal.calcularBitsParidade(bits.length);
 
+        // Além da implementação do transmissor, soma as posições dos 1s encontrados para possível correção
         int quantidade1s = 0;
         boolean bitHammingPar;
         int indiceCorrecao = 0;
@@ -126,12 +128,17 @@ public class Receptor {
                     if (Canal.intToBits(j)[indice1] && bits[j - 1]) quantidade1s++;
                 }
                 bitHammingPar = (quantidade1s % 2 == 0);
+
+                // Caso seja 1, não está integro
                 this.estaIntegro = bitHammingPar;
                 quantidade1s = 0;
+
+                // Caso o bit seja 1, soma a posição
                 if (!bitHammingPar) indiceCorrecao += i;
             }
         }
 
+        // Caso o indice da correção seja valido, inverte o bit e garante a integridade do dado
         if (indiceCorrecao > bits.length) {
             this.estaIntegro = false;
         } else if (indiceCorrecao != 0) {
@@ -139,9 +146,10 @@ public class Receptor {
             this.estaIntegro = true;
         }
 
-        // Novo array com os bits recebidos - os bits de hamming que foram verificados
+        // Novo array com os bits recebidos menos os bits de hamming que foram verificados
         boolean[] bitsOriginais = new boolean[bits.length - quantBitsHamming];
 
+        // Adiciona os elementos no vetor, pulando os bits de verificação
         int c = 0;
         for (int i = 0; i < bits.length; i++) {
             if (Canal.isPotenciaDeDois(i + 1)) {
@@ -150,9 +158,6 @@ public class Receptor {
             bitsOriginais[c] = bits[i];
             c++;
         }
-
-        /*System.out.println("Bits enviados receptor: ");
-        Canal.printBits(adicionaZerosAEsquerda(bitsOriginais, 8));*/
 
         return adicionaZerosAEsquerda(bitsOriginais, 8);
     }
