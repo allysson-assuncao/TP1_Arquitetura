@@ -25,11 +25,7 @@ public class Canal {
         this.feedback = null;
         this.bits = dados;
         geradorRuido(this.bits);
-        try {
-            Thread.sleep(geradorAleatorio.nextInt(20) + 37);
-        } catch (InterruptedException ex) {
-            System.err.println("processo interrompido durante o envio do dado");
-        }
+        geradorAleatorio.nextInt(20);
         this.receptor.receberDadoBits();
     }
 
@@ -39,11 +35,7 @@ public class Canal {
 
     public void enviaFeedBack(Boolean feedback) {
         this.bits = null;
-        try {
-            Thread.sleep(geradorAleatorio.nextInt(20));
-        } catch (InterruptedException ex) {
-            System.err.println("processo interrompido durante o envio do dado");
-        }
+        geradorAleatorio.nextInt(20);
         this.feedback = feedback;
     }
 
