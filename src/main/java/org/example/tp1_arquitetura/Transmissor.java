@@ -140,32 +140,34 @@ public class Transmissor {
                     0 1 0 1 1
 */
 
-    // Metodo que remove os 0s à esquerda para simplificar a abstração da solução
-    public static boolean[] removeZerosAEsquerda(boolean[] bits) {
-        int quant0Esquerda = 0;
-
-        // Identifica quantos 0s a esquerda tem
-        while (quant0Esquerda < bits.length && !bits[quant0Esquerda]) {
-            quant0Esquerda++;
-        }
-        if (quant0Esquerda == 0) {
-            // Não há 0s à esquerda, retorna
+    public static boolean[] removeZerosAEsquerda(boolean[] bits, int tamanhoMinimo) {
+        if (bits.length <= tamanhoMinimo) {
+            // Já está no tamanho mínimo ou menor, retorna
             return bits;
         }
-        if (quant0Esquerda == bits.length) {
-            // Apenas zeros, retorna um vetor zerado
-            return new boolean[0];
-        }
-        boolean[] resultado = new boolean[bits.length - quant0Esquerda];
-        System.arraycopy(bits, quant0Esquerda, resultado, 0, resultado.length);
 
+        int quant0Esquerda = 0;
+        // Conta zeros à esquerda
+        while (quant0Esquerda < bits.length - tamanhoMinimo && !bits[quant0Esquerda]) {
+            quant0Esquerda++;
+        }
+
+        // Alinha com o tamanho mínimo
+        int novoTamanho = bits.length - quant0Esquerda;
+        if (novoTamanho < tamanhoMinimo) {
+            novoTamanho = tamanhoMinimo;
+            quant0Esquerda = bits.length - tamanhoMinimo;
+        }
+
+        boolean[] resultado = new boolean[novoTamanho];
+        System.arraycopy(bits, quant0Esquerda, resultado, novoTamanho - (bits.length - quant0Esquerda), bits.length - quant0Esquerda);
         return resultado;
     }
 
     // Metodo que adicionas os bits de verificação considerando a tecnica CRC
     private boolean[] dadoBitsCRC(boolean[] bitsOriginal) {
 
-        boolean[] bits = removeZerosAEsquerda(bitsOriginal);
+        boolean[] bits = removeZerosAEsquerda(bitsOriginal, 7);
 
         // Novo array com os bits originais + os 0s de verificação
         boolean[] bitsVerificacao = new boolean[bits.length + Canal.polinomio.length - 1];
@@ -276,7 +278,7 @@ public class Transmissor {
     // Metodo que adicionas os bits de verificação considerando a tecnica Hamming
     private boolean[] dadoBitsHamming(boolean[] bitsOriginal) {
 
-        boolean[] bits = removeZerosAEsquerda(bitsOriginal);
+        boolean[] bits = removeZerosAEsquerda(bitsOriginal, 7);
 
         int quantBitsHamming = Canal.calcularBitsParidade(bits.length);
 

@@ -40,7 +40,7 @@ public class Receptor {
             expoente--;
         }
 
-        System.out.print((char) codigoAscii);
+        /*System.out.print((char) codigoAscii);*/
 
         // Concatenando cada simbolo na mensagem original
         this.mensagem += (char) codigoAscii;
@@ -155,7 +155,14 @@ public class Receptor {
             if (Canal.isPotenciaDeDois(i + 1)) {
                 continue;
             }
-            bitsOriginais[c] = bits[i];
+            try {
+                bitsOriginais[c] = bits[i];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("Erro acessar o indice do vetor: " + e.getMessage());
+                Canal.printBits(bitsOriginais);
+                System.out.println("Indice: " + i);
+                Canal.printBits(bits);
+            }
             c++;
         }
 
@@ -177,10 +184,10 @@ public class Receptor {
         String nomeArquivo = "mensagem_recebida.txt";
         try {
             Files.write(
-                Paths.get(nomeArquivo),
-                this.mensagem.getBytes(),
-                StandardOpenOption.CREATE,
-                StandardOpenOption.TRUNCATE_EXISTING
+                    Paths.get(nomeArquivo),
+                    this.mensagem.getBytes(),
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING
             );
             System.out.println("Mensagem decodificada salva em: " + nomeArquivo);
         } catch (IOException e) {
