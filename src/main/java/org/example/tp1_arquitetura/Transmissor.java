@@ -140,34 +140,10 @@ public class Transmissor {
                     0 1 0 1 1
 */
 
-    public static boolean[] removeZerosAEsquerda(boolean[] bits, int tamanhoMinimo) {
-        if (bits.length <= tamanhoMinimo) {
-            // Já está no tamanho mínimo ou menor, retorna
-            return bits;
-        }
-
-        int quant0Esquerda = 0;
-        // Conta zeros à esquerda
-        while (quant0Esquerda < bits.length - tamanhoMinimo && !bits[quant0Esquerda]) {
-            quant0Esquerda++;
-        }
-
-        // Alinha com o tamanho mínimo
-        int novoTamanho = bits.length - quant0Esquerda;
-        if (novoTamanho < tamanhoMinimo) {
-            novoTamanho = tamanhoMinimo;
-            quant0Esquerda = bits.length - tamanhoMinimo;
-        }
-
-        boolean[] resultado = new boolean[novoTamanho];
-        System.arraycopy(bits, quant0Esquerda, resultado, novoTamanho - (bits.length - quant0Esquerda), bits.length - quant0Esquerda);
-        return resultado;
-    }
-
     // Metodo que adicionas os bits de verificação considerando a tecnica CRC
     private boolean[] dadoBitsCRC(boolean[] bitsOriginal) {
 
-        boolean[] bits = removeZerosAEsquerda(bitsOriginal, 7);
+        boolean[] bits = Canal.removeZerosAEsquerda(bitsOriginal, 7);
 
         // Novo array com os bits originais + os 0s de verificação
         boolean[] bitsVerificacao = new boolean[bits.length + Canal.polinomio.length - 1];
@@ -218,7 +194,7 @@ public class Transmissor {
         // Copia os 4 elementos do resto ao final do novo array
         System.arraycopy(resto, 1, bitsCompletos, bits.length, Canal.polinomio.length - 1);
 
-        return bitsCompletos;
+        return Canal.adicionaZerosAEsquerda(bitsCompletos, 8);
     }
 
 
@@ -278,7 +254,9 @@ public class Transmissor {
     // Metodo que adicionas os bits de verificação considerando a tecnica Hamming
     private boolean[] dadoBitsHamming(boolean[] bitsOriginal) {
 
-        boolean[] bits = removeZerosAEsquerda(bitsOriginal, 7);
+        boolean[] bits = Canal.removeZerosAEsquerda(bitsOriginal, 7);
+
+        Canal.printBits(bits);
 
         int quantBitsHamming = Canal.calcularBitsParidade(bits.length);
 
@@ -295,6 +273,8 @@ public class Transmissor {
             bitsCompletos[i] = bits[c];
             c++;
         }
+
+        Canal.printBits(bitsCompletos);
 
         int quantidade1s = 0;
 
@@ -316,7 +296,7 @@ public class Transmissor {
             }
         }
 
-        return bitsCompletos;
+        return Canal.adicionaZerosAEsquerda(bitsCompletos, 8);
     }
 
     public void enviaDado() {

@@ -13,10 +13,13 @@ import java.util.Scanner;
 
 public class TP1_Arquitetura {
 
-    /*public static void main(String[] args) {
-        Canal canal = new Canal(0.1);
+    public static void main(String[] args) {
+        Canal canal = new Canal(0.5);
 
-        Transmissor transm = new Transmissor("", canal, Estrategia.HAMMING);
+        String caminhoArquivo = "src/main/java/Moby Dick.txt";
+        File arquivo = new File(caminhoArquivo);
+
+        Transmissor transm = new Transmissor(arquivo, canal, Estrategia.HAMMING);
         Receptor receber = new Receptor(canal, Estrategia.HAMMING);
 
         canal.conectaTransmissor(transm);
@@ -28,12 +31,10 @@ public class TP1_Arquitetura {
         long tempoF = System.currentTimeMillis();
 
         System.out.println("Tempo total: " + (tempoF - tempoI));
-
-        receber.gravaMensArquivo();
-    }*/
+    }
 
     // Método principal para a execução dos testes de envio de dados na "rede"
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         // Chances de ruído a serem testadas
         double[] ruidos = {0.0, 0.1, 0.2, 0.3, 0.4, 0.5};
 
@@ -87,5 +88,5 @@ public class TP1_Arquitetura {
         } catch (IOException e) {
             System.err.println("Erro ao salvar o arquivo CSV: " + e.getMessage());
         }
-    }
+    }*/
 }

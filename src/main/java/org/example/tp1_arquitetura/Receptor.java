@@ -40,26 +40,16 @@ public class Receptor {
             expoente--;
         }
 
-        /*System.out.print((char) codigoAscii);*/
+        System.out.print((char) codigoAscii);
 
         // Concatenando cada simbolo na mensagem original
         this.mensagem += (char) codigoAscii;
     }
 
-    // Adiciona 0s a esquerda para preencher um determinado tamanho de vetor, para mantes os 8 usados em caracteres UTF-8
-    public static boolean[] adicionaZerosAEsquerda(boolean[] bits, int tamanho) {
-        if (bits.length >= tamanho) {
-            return bits;
-        }
-        boolean[] resultado = new boolean[tamanho];
-        int offset = tamanho - bits.length;
-        // Copia os elementos originais ao novo vetor a partir do offset, deixando o restante como false (0) por padrão
-        System.arraycopy(bits, 0, resultado, offset, bits.length);
-        return resultado;
-    }
-
     // Verifica a integridade do dado recebido na rede utilizando a técnica CRC
-    private boolean[] verificaDadoCRC(boolean[] bits) {
+    private boolean[] verificaDadoCRC(boolean[] bitsOriginal) {
+
+        boolean[] bits = Canal.removeZerosAEsquerda(bitsOriginal, 7);
 
         // Começa igual ao do transmissor
         boolean[] resto = Arrays.copyOf(bits, 5);
@@ -107,11 +97,13 @@ public class Receptor {
         // Copia os elementos originais para um novo array
         System.arraycopy(bits, 0, bitsOriginais, 0, bitsOriginais.length);
 
-        return adicionaZerosAEsquerda(bitsOriginais, 8);
+        return Canal.adicionaZerosAEsquerda(bitsOriginais, 8);
     }
 
     // Verifica a integridade do dado recebido na rede utilizando a técnica Hamming
-    private boolean[] verificaDadoHammig(boolean[] bits) {
+    private boolean[] verificaDadoHammig(boolean[] bitsOriginal) {
+
+        boolean[] bits = Canal.removeZerosAEsquerda(bitsOriginal, 7);
 
         this.estaIntegro = true;
 
@@ -158,7 +150,7 @@ public class Receptor {
             try {
                 bitsOriginais[c] = bits[i];
             } catch (ArrayIndexOutOfBoundsException e) {
-                System.err.println("Erro acessar o indice do vetor: " + e.getMessage());
+                System.out.println("Erro ao acessar o indice do vetor: " + e.getMessage());
                 Canal.printBits(bitsOriginais);
                 System.out.println("Indice: " + i);
                 Canal.printBits(bits);
@@ -166,7 +158,7 @@ public class Receptor {
             c++;
         }
 
-        return adicionaZerosAEsquerda(bitsOriginais, 8);
+        return Canal.adicionaZerosAEsquerda(bitsOriginais, 8);
     }
 
     //recebe os dados do transmissor

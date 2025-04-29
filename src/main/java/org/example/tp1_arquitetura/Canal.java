@@ -111,4 +111,41 @@ public class Canal {
         return bits;
     }
 
+    // Metodo que remove os 0s à esquerda para simplificar a abstração da solução
+    public static boolean[] removeZerosAEsquerda(boolean[] bits, int tamanhoMinimo) {
+        if (bits.length <= tamanhoMinimo) {
+            // Já está no tamanho mínimo ou menor, retorna
+            return bits;
+        }
+
+        int quant0Esquerda = 0;
+        // Conta zeros à esquerda
+        while (quant0Esquerda < bits.length - tamanhoMinimo && !bits[quant0Esquerda]) {
+            quant0Esquerda++;
+        }
+
+        // Alinha com o tamanho mínimo
+        int novoTamanho = bits.length - quant0Esquerda;
+        if (novoTamanho < tamanhoMinimo) {
+            novoTamanho = tamanhoMinimo;
+            quant0Esquerda = bits.length - tamanhoMinimo;
+        }
+
+        boolean[] resultado = new boolean[novoTamanho];
+        System.arraycopy(bits, quant0Esquerda, resultado, novoTamanho - (bits.length - quant0Esquerda), bits.length - quant0Esquerda);
+        return resultado;
+    }
+
+    // Adiciona 0s a esquerda para preencher um determinado tamanho de vetor, para mantes os 8 usados em caracteres UTF-8
+    public static boolean[] adicionaZerosAEsquerda(boolean[] bits, int tamanho) {
+        if (bits.length >= tamanho) {
+            return bits;
+        }
+        boolean[] resultado = new boolean[tamanho];
+        int offset = tamanho - bits.length;
+        // Copia os elementos originais ao novo vetor a partir do offset, deixando o restante como false (0) por padrão
+        System.arraycopy(bits, 0, resultado, offset, bits.length);
+        return resultado;
+    }
+
 }
