@@ -101,11 +101,7 @@ public class Receptor {
     // Verifica a integridade do dado recebido na rede utilizando a técnica Hamming
     private boolean[] verificaDadoHammig(boolean[] bits) {
 
-        /*Canal.printBits(bits);*/
-
         this.estaIntegro = true;
-
-        int quantBitsHamming = Canal.calcularBitsParidade(bits.length);
 
         // Além da implementação do transmissor, soma as posições dos 1s encontrados para possível correção
         int quantidade1s = 0;

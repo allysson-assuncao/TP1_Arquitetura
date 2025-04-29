@@ -256,8 +256,6 @@ public class Transmissor {
 
         boolean[] bits = Canal.removeZerosAEsquerda(bitsOriginal, 7);
 
-        /*Canal.printBits(bits);*/
-
         int quantBitsHamming = Canal.calcularBitsParidade(bits.length);
 
         // Novo array com os bits originais + os bits de hamming a serem definidos
@@ -273,8 +271,6 @@ public class Transmissor {
             bitsCompletos[i] = bits[c];
             c++;
         }
-
-        /*Canal.printBits(bitsCompletos);*/
 
         int quantidade1s = 0;
 
