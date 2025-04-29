@@ -194,7 +194,7 @@ public class Transmissor {
         // Copia os 4 elementos do resto ao final do novo array
         System.arraycopy(resto, 1, bitsCompletos, bits.length, Canal.polinomio.length - 1);
 
-        return Canal.adicionaZerosAEsquerda(bitsCompletos, 8);
+        return bitsCompletos;
     }
 
 
@@ -256,7 +256,7 @@ public class Transmissor {
 
         boolean[] bits = Canal.removeZerosAEsquerda(bitsOriginal, 7);
 
-        Canal.printBits(bits);
+        /*Canal.printBits(bits);*/
 
         int quantBitsHamming = Canal.calcularBitsParidade(bits.length);
 
@@ -274,7 +274,7 @@ public class Transmissor {
             c++;
         }
 
-        Canal.printBits(bitsCompletos);
+        /*Canal.printBits(bitsCompletos);*/
 
         int quantidade1s = 0;
 
@@ -296,7 +296,7 @@ public class Transmissor {
             }
         }
 
-        return Canal.adicionaZerosAEsquerda(bitsCompletos, 8);
+        return bitsCompletos;
     }
 
     public void enviaDado() {

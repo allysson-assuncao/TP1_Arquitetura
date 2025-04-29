@@ -19,6 +19,7 @@ public class TP1_Arquitetura {
         String caminhoArquivo = "src/main/java/Moby Dick.txt";
         File arquivo = new File(caminhoArquivo);
 
+        // £
         Transmissor transm = new Transmissor(arquivo, canal, Estrategia.HAMMING);
         Receptor receber = new Receptor(canal, Estrategia.HAMMING);
 

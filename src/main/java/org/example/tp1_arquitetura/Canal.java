@@ -73,7 +73,7 @@ public class Canal {
         System.out.println(vetorDeBits);
     }
 
-    // Implementação da formula de calculo de bits de paridade: 2^r - r >= K + 1
+    // Implementação da formula de calculo de bits de paridade: 2^r >= K + r + 1
     public static int calcularBitsParidade(int k) {
         int r = 0;
         while (Math.pow(2, r) < (k + r + 1)) {

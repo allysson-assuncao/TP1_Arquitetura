@@ -47,9 +47,7 @@ public class Receptor {
     }
 
     // Verifica a integridade do dado recebido na rede utilizando a técnica CRC
-    private boolean[] verificaDadoCRC(boolean[] bitsOriginal) {
-
-        boolean[] bits = Canal.removeZerosAEsquerda(bitsOriginal, 7);
+    private boolean[] verificaDadoCRC(boolean[] bits) {
 
         // Começa igual ao do transmissor
         boolean[] resto = Arrays.copyOf(bits, 5);
@@ -101,9 +99,9 @@ public class Receptor {
     }
 
     // Verifica a integridade do dado recebido na rede utilizando a técnica Hamming
-    private boolean[] verificaDadoHammig(boolean[] bitsOriginal) {
+    private boolean[] verificaDadoHammig(boolean[] bits) {
 
-        boolean[] bits = Canal.removeZerosAEsquerda(bitsOriginal, 7);
+        /*Canal.printBits(bits);*/
 
         this.estaIntegro = true;
 
@@ -139,7 +137,7 @@ public class Receptor {
         }
 
         // Novo array com os bits recebidos menos os bits de hamming que foram verificados
-        boolean[] bitsOriginais = new boolean[bits.length - quantBitsHamming];
+        boolean[] bitsOriginais = new boolean[bits.length - 4];
 
         // Adiciona os elementos no vetor, pulando os bits de verificação
         int c = 0;
