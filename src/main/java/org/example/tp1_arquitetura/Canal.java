@@ -21,21 +21,29 @@ public class Canal {
         this.probRuido = probRuido;
     }
 
-    public void enviarDado(boolean dados[]) {
+    public void enviarDado(boolean dados[]){
         this.feedback = null;
         this.bits = dados;
         geradorRuido(this.bits);
-        geradorAleatorio.nextInt(20);
+        try {
+            Thread.sleep(geradorAleatorio.nextInt(20)+37);
+        } catch (InterruptedException ex) {
+            System.err.println("processo interrompido durante o envio do dado");
+        }
         this.receptor.receberDadoBits();
     }
 
-    public boolean[] recebeDado() {
+    public boolean[] recebeDado(){
         return this.bits;
     }
 
-    public void enviaFeedBack(Boolean feedback) {
+    public void enviaFeedBack(Boolean feedback){
         this.bits = null;
-        geradorAleatorio.nextInt(20);
+        try {
+            Thread.sleep(geradorAleatorio.nextInt(20));
+        } catch (InterruptedException ex) {
+            System.err.println("processo interrompido durante o envio do dado");
+        }
         this.feedback = feedback;
     }
 

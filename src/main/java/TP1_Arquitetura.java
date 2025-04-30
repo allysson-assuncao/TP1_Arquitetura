@@ -13,7 +13,7 @@ import java.util.Scanner;
 
 public class TP1_Arquitetura {
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         Canal canal = new Canal(0.5);
 
         String caminhoArquivo = "src/main/java/Moby Dick.txt";
@@ -32,10 +32,10 @@ public class TP1_Arquitetura {
         long tempoF = System.currentTimeMillis();
 
         System.out.println("Tempo total: " + (tempoF - tempoI));
-    }
+    }*/
 
     // Método principal para a execução dos testes de envio de dados na "rede"
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         // Chances de ruído a serem testadas
         double[] ruidos = {0.0, 0.1, 0.2, 0.3, 0.4, 0.5};
 
@@ -43,7 +43,7 @@ public class TP1_Arquitetura {
         Estrategia[] tecnicas = {Estrategia.CRC, Estrategia.HAMMING};
 
         // Criação do caminho
-        String caminhoArquivo = "src/main/java/Moby Dick.txt";
+        String caminhoArquivo = "src/main/java/Moby Dick-Cap1.txt";
         File arquivo = new File(caminhoArquivo);
 
         // Monta o cabeçalho do CSV
@@ -89,5 +89,5 @@ public class TP1_Arquitetura {
         } catch (IOException e) {
             System.err.println("Erro ao salvar o arquivo CSV: " + e.getMessage());
         }
-    }*/
+    }
 }
