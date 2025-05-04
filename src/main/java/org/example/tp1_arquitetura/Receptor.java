@@ -99,7 +99,7 @@ public class Receptor {
     }
 
     // Verifica a integridade do dado recebido na rede utilizando a técnica Hamming
-    private boolean[] verificaDadoHammig(boolean[] bits) {
+    private boolean[] verificaDadoHamming(boolean[] bits) {
 
         this.estaIntegro = true;
 
@@ -157,7 +157,7 @@ public class Receptor {
 
     //recebe os dados do transmissor
     public void receberDadoBits() {
-        boolean bitsVerificados[] = this.tecnica == Estrategia.CRC ? verificaDadoCRC(this.canal.recebeDado()) : verificaDadoHammig(this.canal.recebeDado());
+        boolean bitsVerificados[] = this.tecnica == Estrategia.CRC ? verificaDadoCRC(this.canal.recebeDado()) : verificaDadoHamming(this.canal.recebeDado());
 
         if (this.estaIntegro) decodificarDado(bitsVerificados);
 
